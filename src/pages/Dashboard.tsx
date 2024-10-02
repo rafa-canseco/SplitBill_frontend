@@ -9,7 +9,7 @@ function Dashboard() {
     <div>
       <LogButton className="mt-4"/>
       <h1>Dashboard</h1>
-      <p>You're logged in!</p>
+      <p>You're logged in! !</p>
       <li>Wallet: {user.wallet ? user.wallet.address : 'None'}</li>
 
     </div>
