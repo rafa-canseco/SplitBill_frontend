@@ -8,6 +8,7 @@ interface UserData {
   email: string | null;
   walletAddress: string | null;
   is_profile_complete: boolean;
+  is_invited: boolean;
 }
 
 interface UserContextType {
@@ -35,29 +36,48 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const checkResponse = await fetch(`http://localhost:8000/api/user/check/${user.id}`);
+      const walletAddress = user.wallet?.address;
+      const checkResponse = await fetch(
+        `http://localhost:8000/api/user/check?privy_id=${user.id}&wallet_address=${walletAddress || ''}`
+      );
       if (!checkResponse.ok) {
         throw new Error('Failed to check user registration');
       }
-      const { isRegistered } = await checkResponse.json();
-      setIsRegistered(isRegistered);
+      const { isRegistered, isInvited, walletAddress: invitedWalletAddress } = await checkResponse.json();
 
-      if (isRegistered) {
+      if (isInvited) {
+        // El usuario fue invitado previamente
+        setUserData({
+          id: 0,
+          privy_id: user.id,
+          name: null,
+          email: user.email?.address || null,
+          walletAddress: invitedWalletAddress,
+          is_profile_complete: false,
+          is_invited: true,
+        });
+        setIsRegistered(false);
+      } else if (!isRegistered) {
+        // Nuevo usuario, no invitado
+        setUserData({
+          id: 0,
+          privy_id: user.id,
+          name: null,
+          email: user.email?.address || null,
+          walletAddress: walletAddress || null,
+          is_profile_complete: false,
+          is_invited: false,
+        });
+        setIsRegistered(false);
+      } else {
+        // Este caso no debería ocurrir dado nuestro flujo, pero lo mantenemos por completitud
         const userDataResponse = await fetch(`http://localhost:8000/api/user/${user.id}`);
         if (!userDataResponse.ok) {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userDataResponse.json();
         setUserData(userData);
-      } else {
-        setUserData({
-          id: 0,
-          privy_id: user.id,
-          name: null,
-          email: user.email?.address || null,
-          walletAddress: user.wallet?.address || null,
-          is_profile_complete: false,
-        });
+        setIsRegistered(true);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');

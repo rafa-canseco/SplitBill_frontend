@@ -10,6 +10,7 @@ interface Session {
   qty_users: number;
   state: string;
   total_spent: number;
+  is_invited: boolean;
 }
 
 function UserSessions() {
@@ -27,7 +28,6 @@ function UserSessions() {
         const response = await fetch(`http://localhost:8000/api/sessions/${userData.walletAddress}`);
         if (!response.ok) throw new Error('Failed to fetch sessions');
         const data = await response.json();
-        console.log(data);
         setSessions(data.sessions);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
