@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { usePrivy, User } from '@privy-io/react-auth';
 
 interface UserData {
@@ -17,7 +17,7 @@ interface UserContextType {
   fetchUserData: () => Promise<void>;
   updateUserProfile: (data: Partial<UserData>) => Promise<void>;
   privyUser: User | null;
-  isRegistered:boolean;
+  isRegistered: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -56,7 +56,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           name: null,
           email: user.email?.address || null,
           walletAddress: user.wallet?.address || null,
-          is_profile_complete: false
+          is_profile_complete: false,
         });
       }
     } catch (err) {
@@ -75,14 +75,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
       const method = userData?.id ? 'PUT' : 'POST';
-      const endpoint = userData?.id 
-        ? `http://localhost:8000/api/user/${user.id}`
-        : 'http://localhost:8000/api/user';
+      const endpoint = userData?.id ? `http://localhost:8000/api/user/${user.id}` : 'http://localhost:8000/api/user';
 
       const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, privy_id: user.id })
+        body: JSON.stringify({ ...data, privy_id: user.id }),
       });
 
       if (!response.ok) throw new Error('Failed to update user profile');
@@ -105,15 +103,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, [ready, user]);
 
   return (
-    <UserContext.Provider value={{ 
-      userData, 
-      isLoading, 
-      error, 
-      fetchUserData, 
-      updateUserProfile,
-      privyUser: user,
-      isRegistered:isRegistered
-    }}>
+    <UserContext.Provider
+      value={{
+        userData,
+        isLoading,
+        error,
+        fetchUserData,
+        updateUserProfile,
+        privyUser: user,
+        isRegistered: isRegistered,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
