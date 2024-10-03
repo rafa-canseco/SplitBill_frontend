@@ -1,19 +1,25 @@
-import LogButton from "@/componentsUX/LogButton"
-import { usePrivy } from '@privy-io/react-auth';
-
-
+import { useUser } from '../contexts/UserContext';
+import UserProfileForm from '../componentsUX/UserProfileForm';
+import LogButton from '../componentsUX/LogButton';
 
 function Dashboard() {
-      const { user } = usePrivy();
+const { userData, isLoading, error, isRegistered } = useUser();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  if (!userData || !isRegistered) {
+    return <UserProfileForm />;
+  }
+
   return (
     <div>
-      <LogButton className="mt-4"/>
-      <h1>Dashboard</h1>
-      <p>You're logged in! !</p>
-      <li>Wallet: {user.wallet ? user.wallet.address : 'None'}</li>
-
+      <h1>Welcome, {userData.name}!</h1>
+      <p>Email: {userData.email}</p>
+      <p>Wallet: {userData.walletAddress}</p>
+      <LogButton />
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
