@@ -1,7 +1,6 @@
 import { useUser } from '../contexts/UserContext';
 import UserProfileForm from '../componentsUX/UserProfileForm';
-import LogButton from '../componentsUX/LogButton';
-import { ModeToggle } from '@/componentsUX/mode-toggle';
+import Navbar from '../componentsUX/Navbar';
 
 function Dashboard() {
 const { userData, isLoading, error, isRegistered } = useUser();
@@ -11,25 +10,22 @@ const { userData, isLoading, error, isRegistered } = useUser();
 
   if (!userData || !isRegistered) {
     return (
-      <>
-        <ModeToggle />
-        <UserProfileForm />
-      </>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow">
+          <UserProfileForm />
+        </main>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full">
-      <ModeToggle />
-      <div className="flex flex-row  justify-between">
-        <h1 className="mr-4">Welcome, {userData.name}!</h1>
-        <LogButton />
-      </div>
-      <div className="mt-4">
-        <p className="mr-4">Email: {userData.email}</p>
-        <p className="mr-4">Wallet: {userData.walletAddress}</p>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow p-4">
+
         <div>Something else</div>
+      </main>
     </div>
   );
 }
