@@ -4,8 +4,12 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 interface Session {
-  id: string;
-  name: string;
+  created_at: string;
+  fiat: string;
+  id: number;
+  qty_users: number;
+  state: string;
+  total_spent: number;
 }
 
 function UserSessions() {
@@ -23,7 +27,8 @@ function UserSessions() {
         const response = await fetch(`http://localhost:8000/api/sessions/${userData.walletAddress}`);
         if (!response.ok) throw new Error('Failed to fetch sessions');
         const data = await response.json();
-        setSessions(Array.isArray(data) ? data : []);
+        console.log(data);
+        setSessions(data.sessions);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
@@ -45,7 +50,10 @@ function UserSessions() {
       ) : (
         <ul>
           {sessions.map((session) => (
-            <li key={session.id}>{session.name}</li>
+            <li key={session.id}>
+              Session ID: {session.id}, State: {session.state}, Users: {session.qty_users}, Created:{' '}
+              {new Date(session.created_at).toLocaleString()}, Fiat: {session.fiat}, Total Spent: {session.total_spent}
+            </li>
           ))}
         </ul>
       )}
