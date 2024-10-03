@@ -6,7 +6,7 @@ function Navbar() {
   const { userData } = useUser();
 
   return (
-    <nav className="flex items-center justify-between p-4 bg-background">
+    <nav className="flex items-center justify-between p-4">
       <div className="flex items-center">
         {userData && (
           <>
