@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "echo \"No tests specified\""
   },
   "dependencies": {
     "@privy-io/react-auth": "^1.88.2",
