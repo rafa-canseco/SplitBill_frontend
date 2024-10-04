@@ -61,7 +61,7 @@ function CreateSession() {
       toast({
         description: 'Creating session on blockchain. Please confirm the transaction.',
       });
-
+      /// todo: add correct id
       const txHash = await createSessionOnChain(wallet, 5, invitedParticipants);
 
       toast({

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../contexts/UserContext';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Session {
   created_at: string;
@@ -48,18 +47,32 @@ function UserSessions() {
       {!sessions || sessions.length === 0 ? (
         <p>No sessions found.</p>
       ) : (
-        <ul>
-          {sessions.map((session) => (
-            <li key={session.id}>
-              Session ID: {session.id}, State: {session.state}, Users: {session.qty_users}, Created:{' '}
-              {new Date(session.created_at).toLocaleString()}, Fiat: {session.fiat}, Total Spent: {session.total_spent}
-            </li>
-          ))}
-        </ul>
+        <Table>
+          <TableCaption>A list of your recent sessions.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>State</TableHead>
+              <TableHead>Users</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Fiat</TableHead>
+              <TableHead className="text-right">Total Spent</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sessions.map((session) => (
+              <TableRow key={session.id}>
+                <TableCell className="font-medium">{session.id}</TableCell>
+                <TableCell>{session.state}</TableCell>
+                <TableCell>{session.qty_users}</TableCell>
+                <TableCell>{new Date(session.created_at).toLocaleString()}</TableCell>
+                <TableCell>{session.fiat}</TableCell>
+                <TableCell className="text-right">{session.total_spent}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
-      <Link to="/create-session">
-        <Button>Create New Session</Button>
-      </Link>
     </div>
   );
 }

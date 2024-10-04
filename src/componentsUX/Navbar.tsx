@@ -1,24 +1,12 @@
-import { useUser } from '../contexts/UserContext';
 import LogButton from './LogButton';
 import { ModeToggle } from './mode-toggle';
 
 function Navbar() {
-  const { userData } = useUser();
-
   return (
-    <nav className="flex items-center justify-between p-4">
+    <nav className="flex items-center justify-end p-4 w-full">
       <div className="flex items-center">
-        {userData && (
-          <>
-            <span className="mr-4">Welcome, {userData.name}!</span>
-            <span className="mr-4">Wallet: {userData.walletAddress}</span>
-            <span className="mr-4">Email: {userData.email}</span>
-          </>
-        )}
-      </div>
-      <div className="flex items-center">
-        <LogButton className="mr-4" />
         <ModeToggle />
+        <LogButton className="mr-4 ml-4" />
       </div>
     </nav>
   );
