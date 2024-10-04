@@ -62,18 +62,13 @@ function CreateSession() {
         description: 'Creating session on blockchain. Please confirm the transaction.',
       });
 
-      const txHash = await createSessionOnChain(
-        wallet,
-        3, // Usar timestamp como sessionId temporal
-        invitedParticipants
-      );
+      const txHash = await createSessionOnChain(wallet, 3, invitedParticipants);
 
       toast({
         description: `Transaction submitted. Hash: ${txHash}`,
         duration: 5000,
       });
 
-      // Luego, crear la sesión en la base de datos
       const response = await fetch('http://localhost:8000/create_session', {
         method: 'POST',
         headers: {
