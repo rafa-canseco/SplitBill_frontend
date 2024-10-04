@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { createSessionOnChain } from '../utils/contractInteraction';
+import { useWallets } from '@privy-io/react-auth';
 
 function CreateSession() {
   const { userData } = useUser();
@@ -11,6 +13,7 @@ function CreateSession() {
   const [qtyUsers, setQtyUsers] = useState(1);
   const [additionalWallets, setAdditionalWallets] = useState<string[]>([]);
   const { toast } = useToast();
+  const { wallets } = useWallets();
 
   const handleQtyUsersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQty = parseInt(e.target.value);
@@ -52,6 +55,25 @@ function CreateSession() {
     }
 
     try {
+      const wallet = wallets[0];
+      const invitedParticipants = additionalWallets.filter((wallet) => wallet !== '');
+
+      toast({
+        description: 'Creating session on blockchain. Please confirm the transaction.',
+      });
+
+      const txHash = await createSessionOnChain(
+        wallet,
+        3, // Usar timestamp como sessionId temporal
+        invitedParticipants
+      );
+
+      toast({
+        description: `Transaction submitted. Hash: ${txHash}`,
+        duration: 5000,
+      });
+
+      // Luego, crear la sesión en la base de datos
       const response = await fetch('http://localhost:8000/create_session', {
         method: 'POST',
         headers: {
@@ -61,21 +83,23 @@ function CreateSession() {
           state: qtyUsers > 1 ? 'PendingUsers' : 'Active',
           fiat: 'usdc',
           qty_users: qtyUsers,
-          wallet_addresses: [userData.walletAddress, ...additionalWallets.filter((wallet) => wallet !== '')],
+          wallet_addresses: [userData.walletAddress, ...invitedParticipants],
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create session');
+      if (!response.ok) throw new Error('Failed to create session in database');
+
+      await response.json();
 
       toast({
-        description: 'Session created successfully.',
+        description: 'Session created successfully on-chain and off-chain.',
       });
       navigate('/dashboard');
     } catch (error) {
       console.error('Error creating session:', error);
       toast({
         variant: 'destructive',
-        description: 'Failed to create session.',
+        description: error instanceof Error ? error.message : 'Failed to create session.',
       });
     }
   };
