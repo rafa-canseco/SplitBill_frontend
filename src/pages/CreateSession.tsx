@@ -61,11 +61,9 @@ function CreateSession() {
       toast({
         description: 'Creating session on blockchain. Please confirm the transaction.',
       });
-      /// todo: add correct id
-      const txHash = await createSessionOnChain(wallet, 5, invitedParticipants);
-
+      const { sessionId, hash } = await createSessionOnChain(wallet, invitedParticipants);
       toast({
-        description: `Transaction submitted. Hash: ${txHash}`,
+        description: `Transaction submitted. Hash: ${hash}`,
         duration: 5000,
       });
 
@@ -73,7 +71,6 @@ function CreateSession() {
         { walletAddress: userData.walletAddress, joined: true },
         ...invitedParticipants.map((wallet) => ({ walletAddress: wallet, joined: false })),
       ];
-      console.log(participants);
 
       const response = await fetch('http://localhost:8000/create_session', {
         method: 'POST',
@@ -81,6 +78,7 @@ function CreateSession() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: sessionId,
           state: qtyUsers > 1 ? 'PendingUsers' : 'Active',
           fiat: 'usdc',
           qty_users: qtyUsers,
