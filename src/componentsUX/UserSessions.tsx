@@ -39,7 +39,7 @@ function UserSessions() {
           <TableCaption>A list of your recent sessions.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead className="w-[100px] text-center">ID</TableHead>
               <TableHead className="text-center">State</TableHead>
               <TableHead className="text-center">Users</TableHead>
               <TableHead className="text-center">Created At</TableHead>

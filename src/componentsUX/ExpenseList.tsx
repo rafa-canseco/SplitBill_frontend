@@ -14,10 +14,10 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, participants, fiat 
       <TableCaption>List of expenses for this session</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Description</TableHead>
-          <TableHead>Amount</TableHead>
-          <TableHead>Payer</TableHead>
-          <TableHead>Date</TableHead>
+          <TableHead className="text-center">Description</TableHead>
+          <TableHead className="text-center">Amount</TableHead>
+          <TableHead className="text-center">Payer</TableHead>
+          <TableHead className="text-center">Date</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

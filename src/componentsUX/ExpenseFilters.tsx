@@ -23,9 +23,9 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({
   participants,
 }) => {
   return (
-    <div className="mt-6 mb-4 flex space-x-4">
+    <div className="mt-6 mb-4  space-y-4">
       <Select value={selectedUser} onValueChange={setSelectedUser}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger>
           <SelectValue placeholder="Select user" />
         </SelectTrigger>
         <SelectContent>
