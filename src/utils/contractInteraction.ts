@@ -5,7 +5,6 @@ import ExpensesBalancerABI from '../abi/ExpensesBalancerABI.json';
 
 interface EthereumProvider {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-  // Añade aquí otras propiedades que sepas que el proveedor de Ethereum debe tener
 }
 interface WalletType {
   getEthereumProvider: () => Promise<EthereumProvider>;

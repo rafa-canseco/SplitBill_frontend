@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useWallets } from '@privy-io/react-auth';
 import { joinSessionOnChain, checkAllParticipantsJoined } from '@/utils/contractInteraction';
+import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface Session {
   created_at: string;
@@ -24,6 +26,7 @@ function UserSessions() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const { wallets } = useWallets();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -112,6 +115,18 @@ function UserSessions() {
     }
   };
 
+  const handleRowClick = (session: Session) => {
+    if (session.state === 'Active') {
+      navigate(`/session/${session.id}`);
+    } else {
+      toast({
+        title: 'Session not active',
+        description: 'Some users still need to join this session.',
+        variant: 'warning',
+      });
+    }
+  };
+
   if (isLoading) return <div>Loading sessions...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -136,7 +151,16 @@ function UserSessions() {
           </TableHeader>
           <TableBody>
             {sessions.map((session) => (
-              <TableRow key={session.id}>
+              <TableRow
+                key={session.id}
+                onClick={() => handleRowClick(session)}
+                className={cn(
+                  'cursor-pointer',
+                  session.state === 'Active'
+                    ? 'hover:bg-green-100 dark:hover:bg-green-900'
+                    : 'hover:bg-red-100 dark:hover:bg-red-900'
+                )}
+              >
                 <TableCell className="font-medium">{session.id}</TableCell>
                 <TableCell>{session.state}</TableCell>
                 <TableCell>{session.qty_users}</TableCell>

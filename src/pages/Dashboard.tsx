@@ -3,7 +3,6 @@ import UserProfileForm from '../componentsUX/UserProfileForm';
 import Navbar from '../componentsUX/Navbar';
 import UserSessions from '@/componentsUX/UserSessions';
 import Subheader from '@/componentsUX/Subheader';
-
 function Dashboard() {
   const { userData, isLoading, error, isRegistered } = useUser();
 
@@ -20,16 +19,22 @@ function Dashboard() {
       </div>
     );
   }
-
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow p-4">
-        <Subheader />
+      <div className="flex-grow p-4">
+        <div className="flex items-center">
+          <div className="flex-grow p-4">
+            <Subheader />
+          </div>
+          {/* <Link to="/create-session">
+            <Button>Create Session</Button>
+          </Link> */}
+        </div>
         <div>
           <UserSessions />
         </div>
-      </main>
+      </div>
     </div>
   );
 }
