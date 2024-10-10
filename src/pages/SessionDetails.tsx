@@ -7,6 +7,7 @@ import ExpenseForm from '@/componentsUX/ExpenseForm';
 import ParticipantTotals from '@/componentsUX/ParticipantTotals';
 import ExpenseList from '@/componentsUX/ExpenseList';
 import ExpenseFilters from '@/componentsUX/ExpenseFilters';
+import Navbar from '@/componentsUX/Navbar';
 
 function SessionDetails() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -32,6 +33,7 @@ function SessionDetails() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <Navbar />
       <Subheader />
       <main className="flex-grow p-4">
         <div className="flex justify-between items-center mb-4">

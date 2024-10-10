@@ -1,6 +1,4 @@
 import { useUser } from '../contexts/UserContext';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 
 function Subheader() {
   const { userData } = useUser();
@@ -11,9 +9,6 @@ function Subheader() {
         <h2 className="text-2xl font-semibold">{userData?.name}</h2>
         <p className="text-sm text-muted-foreground">{userData?.email}</p>
         <p className="text-sm text-muted-foreground ">Wallet: {userData?.walletAddress}</p>
-        <Link to="/create-session">
-          <Button>Create Session</Button>
-        </Link>
       </div>
     </div>
   );

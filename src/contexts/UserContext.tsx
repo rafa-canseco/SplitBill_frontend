@@ -46,7 +46,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const { isRegistered, isInvited, walletAddress: invitedWalletAddress } = await checkResponse.json();
 
       if (isInvited) {
-        // El usuario fue invitado previamente
         setUserData({
           id: 0,
           privy_id: user.id,

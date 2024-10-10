@@ -3,6 +3,8 @@ import UserProfileForm from '../componentsUX/UserProfileForm';
 import Navbar from '../componentsUX/Navbar';
 import UserSessions from '@/componentsUX/UserSessions';
 import Subheader from '@/componentsUX/Subheader';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 function Dashboard() {
   const { userData, isLoading, error, isRegistered } = useUser();
 
@@ -27,9 +29,9 @@ function Dashboard() {
           <div className="flex-grow p-4">
             <Subheader />
           </div>
-          {/* <Link to="/create-session">
+          <Link to="/create-session">
             <Button>Create Session</Button>
-          </Link> */}
+          </Link>
         </div>
         <div>
           <UserSessions />

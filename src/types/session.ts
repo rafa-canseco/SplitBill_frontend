@@ -22,6 +22,7 @@ export interface Session {
   fiat: string;
   total_spent: number;
   qty_users: number;
+  is_joined: boolean;
 }
 
 export interface SessionDetails {
