@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSessionDetails } from '../hooks/useSessionDetails';
 import Subheader from '@/componentsUX/Subheader';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,8 @@ import ExpenseFilters from '@/componentsUX/ExpenseFilters';
 import Navbar from '@/componentsUX/Navbar';
 import InfoCard from '@/componentsUX/InfoCard';
 import CreateExpenseModal from '@/componentsUX/CreateExpenseModal';
+import { useWallets } from '@privy-io/react-auth';
+import { checkoutSession } from '@/utils/contractInteraction';
 
 function SessionDetails() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -25,6 +27,25 @@ function SessionDetails() {
     handleAddExpense,
     handleRegisterExpenses,
   } = useSessionDetails(sessionId || '');
+  const navigate = useNavigate();
+  const { wallets } = useWallets();
+
+  const handleCheckout = async () => {
+    if (!sessionDetails) return;
+    try {
+      const wallet = wallets[0];
+      const expenses = sessionDetails.participants.map((p) => p.total_spent);
+      const balances = await checkoutSession(wallet, sessionDetails.session.id, expenses);
+      navigate(`/checkout/${sessionId}`, { state: { balances } });
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Checkout Error',
+        description: 'Failed to perform checkout. Please try again.',
+      });
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (!sessionDetails) return <div>Error loading session details</div>;
@@ -39,6 +60,9 @@ function SessionDetails() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Session {session.id}</h2>
           <CreateExpenseModal participants={participants} onAddExpense={handleAddExpense} />
+          <Button onClick={handleCheckout} className="ml-2">
+            Do Checkout
+          </Button>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="space-y-4">

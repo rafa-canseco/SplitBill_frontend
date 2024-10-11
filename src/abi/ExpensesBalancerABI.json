@@ -1,88 +1,35 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_stablecoinAddress",
-        "type": "address"
-      }
-    ],
+    "inputs": [{ "internalType": "address", "name": "_stablecoinAddress", "type": "address" }],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
+    "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
     "name": "OwnableInvalidOwner",
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
+    "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
     "name": "OwnableUnauthorizedAccount",
     "type": "error"
   },
-  {
-    "inputs": [],
-    "name": "ReentrancyGuardReentrantCall",
-    "type": "error"
-  },
+  { "inputs": [], "name": "ReentrancyGuardReentrantCall", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "sessionId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "indexed": true, "internalType": "uint256", "name": "sessionId", "type": "uint256" },
+      { "indexed": false, "internalType": "address", "name": "to", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
-    "name": "BalanceRedistributed",
+    "name": "BalanceSettled",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "OwnershipTransferred",
     "type": "event"
@@ -90,18 +37,8 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "sessionId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "participant",
-        "type": "address"
-      }
+      { "indexed": true, "internalType": "uint256", "name": "sessionId", "type": "uint256" },
+      { "indexed": false, "internalType": "address", "name": "participant", "type": "address" }
     ],
     "name": "ParticipantJoined",
     "type": "event"
@@ -109,24 +46,9 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "sessionId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "payer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "indexed": true, "internalType": "uint256", "name": "sessionId", "type": "uint256" },
+      { "indexed": false, "internalType": "address", "name": "payer", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "PaymentMade",
     "type": "event"
@@ -134,24 +56,9 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "sessionId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address[]",
-        "name": "invitedParticipants",
-        "type": "address[]"
-      }
+      { "indexed": true, "internalType": "uint256", "name": "sessionId", "type": "uint256" },
+      { "indexed": false, "internalType": "address", "name": "creator", "type": "address" },
+      { "indexed": false, "internalType": "address[]", "name": "participants", "type": "address[]" }
     ],
     "name": "SessionCreated",
     "type": "event"
@@ -159,69 +66,89 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "sessionId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "enum ExpenseBalancer.SessionState",
-        "name": "newState",
-        "type": "uint8"
-      }
+      { "indexed": true, "internalType": "uint256", "name": "sessionId", "type": "uint256" },
+      { "indexed": false, "internalType": "enum ExpenseBalancer.SessionState", "name": "newState", "type": "uint8" }
     ],
     "name": "SessionStateChanged",
     "type": "event"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_sessionId",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "_sessionId", "type": "uint256" }],
     "name": "allParticipantsJoined",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_invitedParticipants",
-        "type": "address[]"
-      }
+      { "internalType": "uint256", "name": "_sessionId", "type": "uint256" },
+      { "internalType": "uint256[]", "name": "_expenses", "type": "uint256[]" }
     ],
+    "name": "checkout",
+    "outputs": [{ "internalType": "int256[]", "name": "", "type": "int256[]" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address[]", "name": "_participants", "type": "address[]" }],
     "name": "createSession",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_sessionId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_sessionId", "type": "uint256" },
+      { "internalType": "address", "name": "_participant", "type": "address" }
     ],
+    "name": "getParticipantBalance",
+    "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_sessionId", "type": "uint256" },
+      { "internalType": "address", "name": "_participant", "type": "address" }
+    ],
+    "name": "getParticipantConfirmation",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_sessionId", "type": "uint256" },
+      { "internalType": "address", "name": "_participant", "type": "address" }
+    ],
+    "name": "getParticipantHasPaid",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_sessionId", "type": "uint256" }],
+    "name": "getSessionInfo",
+    "outputs": [
+      { "internalType": "address", "name": "creator", "type": "address" },
+      { "internalType": "address[]", "name": "participants", "type": "address[]" },
+      { "internalType": "uint256", "name": "totalExpense", "type": "uint256" },
+      { "internalType": "uint256", "name": "averageExpense", "type": "uint256" },
+      { "internalType": "enum ExpenseBalancer.SessionState", "name": "state", "type": "uint8" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_sessionId", "type": "uint256" }],
     "name": "joinSession",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_sessionId", "type": "uint256" }],
+    "name": "makePayment",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -229,67 +156,27 @@
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
+  { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_sessionId",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "_sessionId", "type": "uint256" }],
     "name": "sessionExists",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "sessions",
     "outputs": [
-      {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      },
-      {
-        "internalType": "enum ExpenseBalancer.SessionState",
-        "name": "state",
-        "type": "uint8"
-      },
-      {
-        "internalType": "bool",
-        "name": "exists",
-        "type": "bool"
-      }
+      { "internalType": "address", "name": "creator", "type": "address" },
+      { "internalType": "uint256", "name": "totalExpense", "type": "uint256" },
+      { "internalType": "uint256", "name": "averageExpense", "type": "uint256" },
+      { "internalType": "enum ExpenseBalancer.SessionState", "name": "state", "type": "uint8" },
+      { "internalType": "bool", "name": "exists", "type": "bool" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -297,24 +184,12 @@
   {
     "inputs": [],
     "name": "stablecoin",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
+    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",

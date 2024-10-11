@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/componentsUX/theme-provider';
 import CreateSession from './pages/CreateSession';
 import { Toaster } from './components/ui/toaster';
 import SessionDetails from './pages/SessionDetails';
+import CheckoutDetails from './pages/CheckoutDetails';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create-session" element={<CreateSession />} />
             <Route path="/session/:sessionId" element={<SessionDetails />} />
+            <Route path="/checkout/:sessionId" element={<CheckoutDetails />} />
           </Routes>
           <Toaster />
         </Router>

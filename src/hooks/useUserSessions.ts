@@ -2,9 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useWallets } from '@privy-io/react-auth';
-import { joinSessionOnChain, checkAllParticipantsJoined } from '@/utils/contractInteraction';
+import {
+  joinSessionOnChain,
+  checkAllParticipantsJoined,
+  getSessionState,
+  getSessionStateString,
+} from '@/utils/contractInteraction';
 import { Session } from '../types/session';
-import { fetchUserSessions, joinSession, activateSession } from '../utils/api';
+import { fetchUserSessions, joinSession } from '../utils/api';
 
 export function useUserSessions() {
   const { userData } = useUser();
@@ -14,18 +19,36 @@ export function useUserSessions() {
   const { toast } = useToast();
   const { wallets } = useWallets();
 
+  const updateSessionStates = useCallback(
+    async (sessionsToUpdate: Session[]) => {
+      if (!wallets[0]) return sessionsToUpdate;
+      const wallet = wallets[0];
+
+      const updatedSessions = await Promise.all(
+        sessionsToUpdate.map(async (session) => {
+          const state = await getSessionState(wallet, session.id);
+          return { ...session, state: getSessionStateString(state) };
+        })
+      );
+
+      return updatedSessions;
+    },
+    [wallets]
+  );
+
   const loadSessions = useCallback(async () => {
     if (!userData?.walletAddress) return;
     setIsLoading(true);
     try {
       const fetchedSessions = await fetchUserSessions(userData.walletAddress);
-      setSessions(fetchedSessions);
+      const sessionsWithUpdatedStates = await updateSessionStates(fetchedSessions);
+      setSessions(sessionsWithUpdatedStates);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setIsLoading(false);
     }
-  }, [userData?.walletAddress]);
+  }, [userData?.walletAddress, updateSessionStates]);
 
   useEffect(() => {
     loadSessions();
@@ -51,36 +74,31 @@ export function useUserSessions() {
 
         await joinSession(sessionId, userData.walletAddress);
 
-        setSessions(
-          (prevSessions) =>
-            prevSessions?.map((session) => (session.id === sessionId ? { ...session, is_joined: true } : session)) ??
-            null
-        );
-
         toast({
           description: 'Successfully joined the session.',
         });
 
         const allJoined = await checkAllParticipantsJoined(wallet, sessionId);
         if (allJoined) {
-          await activateSession(sessionId, userData.walletAddress);
+          const sessionState = await getSessionState(wallet, sessionId);
           setSessions(
             (prevSessions) =>
-              prevSessions?.map((session) => (session.id === sessionId ? { ...session, state: 'Active' } : session)) ??
-              null
+              prevSessions?.map((session) =>
+                session.id === sessionId ? { ...session, state: sessionState } : session
+              ) ?? null
           );
 
           toast({
-            description: 'All participants have joined. Session is now active.',
+            description: `All participants have joined. Session state: ${sessionState}`,
           });
         }
 
-        loadSessions();
+        await loadSessions();
       } catch (error) {
-        console.error('Error joining session or activating:', error);
+        console.error('Error joining session:', error);
         toast({
           variant: 'destructive',
-          description: error instanceof Error ? error.message : 'Failed to join session or activate.',
+          description: error instanceof Error ? error.message : 'Failed to join session.',
         });
       }
     },

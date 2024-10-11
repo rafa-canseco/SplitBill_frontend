@@ -14,6 +14,8 @@ function UserSessions() {
   const handleRowClick = (session: Session) => {
     if (session.state === 'Active') {
       navigate(`/session/${session.id}`);
+    } else if (session.state === 'AwaitingPayment') {
+      navigate(`/checkout/${session.id}`);
     } else {
       toast({
         title: 'Session not active',
