@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { useUserSessions } from '../hooks/useUserSessions';
 import { useToast } from '@/hooks/use-toast';
 import { Session } from '../types/session';
+import './UserSession.css';
 
 function UserSessions() {
   const { sessions, isLoading, error, handleJoinSession } = useUserSessions();
@@ -14,7 +15,7 @@ function UserSessions() {
   const handleRowClick = (session: Session) => {
     if (session.state === 'Active') {
       navigate(`/session/${session.id}`);
-    } else if (session.state === 'AwaitingPayment') {
+    } else if (session.state === 'AwaitingPayment' || session.state === 'Completed') {
       navigate(`/checkout/${session.id}`);
     } else {
       toast({
@@ -33,11 +34,11 @@ function UserSessions() {
   if (error) return <div>Error: {error}</div>;
   return (
     <div>
-      <h2>Your Sessions</h2>
+      <h1 className="text-2xl font-bold mb-4">Your Sessions</h1>
       {!sessions || sessions.length === 0 ? (
         <p>No sessions found.</p>
       ) : (
-        <Table>
+        <Table className="table-container">
           <TableCaption>A list of your recent sessions.</TableCaption>
           <TableHeader>
             <TableRow>
@@ -47,7 +48,6 @@ function UserSessions() {
               <TableHead className="text-center">Created At</TableHead>
               <TableHead className="text-center">Currency</TableHead>
               <TableHead className="text-center">Total Spent</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -57,9 +57,14 @@ function UserSessions() {
                 onClick={() => handleRowClick(session)}
                 className={cn(
                   'cursor-pointer',
-                  session.state === 'Active'
-                    ? 'hover:bg-green-100 dark:hover:bg-green-900'
-                    : 'hover:bg-red-100 dark:hover:bg-red-900'
+                  'glow-hover',
+                  session.state === 'Completed' || session.state === 'Active'
+                    ? 'glow-hover-green'
+                    : session.state === 'Pending'
+                      ? 'glow-hover-red'
+                      : session.state === 'AwaitingPayment'
+                        ? 'glow-hover-yellow'
+                        : ''
                 )}
               >
                 <TableCell className="font-medium">{session.id}</TableCell>

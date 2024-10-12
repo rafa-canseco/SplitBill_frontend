@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { usePrivy } from "@privy-io/react-auth";
-import { useUser } from "../contexts/UserContext";
-import LogButton from "@/componentsUX/LogButton";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { usePrivy } from '@privy-io/react-auth';
+import { useUser } from '../contexts/UserContext';
+import LogButton from '@/componentsUX/LogButton';
 
 function Home() {
   const { authenticated, ready } = usePrivy();
@@ -11,7 +11,7 @@ function Home() {
 
   useEffect(() => {
     if (ready && authenticated && isRegistered && !isLoading && userData?.is_profile_complete) {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   }, [ready, authenticated, isRegistered, isLoading, userData, navigate]);
 

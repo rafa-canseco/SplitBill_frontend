@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSessionDetails } from '../hooks/useSessionDetails';
-import Subheader from '@/componentsUX/Subheader';
 import { Button } from '@/components/ui/button';
 import ExpenseList from '@/componentsUX/ExpenseList';
-import ExpenseFilters from '@/componentsUX/ExpenseFilters';
 import Navbar from '@/componentsUX/Navbar';
 import InfoCard from '@/componentsUX/InfoCard';
-import CreateExpenseModal from '@/componentsUX/CreateExpenseModal';
+import CreateExpenseSheet from '@/componentsUX/CreateExpenseSheet';
 import { useWallets } from '@privy-io/react-auth';
 import { checkoutSession } from '@/utils/contractInteraction';
+import { useToast } from '@/hooks/use-toast';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import ExpenseFilters from '@/componentsUX/ExpenseFilters';
+import { ListFilter, CirclePlus, CircleCheckBig } from 'lucide-react';
 
 function SessionDetails() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -29,6 +31,9 @@ function SessionDetails() {
   } = useSessionDetails(sessionId || '');
   const navigate = useNavigate();
   const { wallets } = useWallets();
+  const { toast } = useToast();
+  const [isCreateExpenseOpen, setIsCreateExpenseOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const handleCheckout = async () => {
     if (!sessionDetails) return;
@@ -55,14 +60,41 @@ function SessionDetails() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <Subheader />
       <main className="flex-grow p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Session {session.id}</h2>
-          <CreateExpenseModal participants={participants} onAddExpense={handleAddExpense} />
-          <Button onClick={handleCheckout} className="ml-2">
-            Do Checkout
-          </Button>
+          <div className="flex items-center">
+            <DropdownMenu open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button className="mr-2">
+                  <ListFilter className="mr-2 h-4 w-4" />
+                  Filter
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <div className="p-2">
+                  <h3 className="text-lg font-semibold mb-2">Filters</h3>
+                  <ExpenseFilters
+                    selectedUser={selectedUser}
+                    setSelectedUser={setSelectedUser}
+                    dateFilter={dateFilter}
+                    setDateFilter={setDateFilter}
+                    conceptFilter={conceptFilter}
+                    setConceptFilter={setConceptFilter}
+                    participants={participants}
+                  />
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button onClick={() => setIsCreateExpenseOpen(true)} className="mr-2">
+              <CirclePlus className="mr-2 h-4 w-4" />
+              Add Expense
+            </Button>
+            <Button onClick={handleCheckout}>
+              <CircleCheckBig className="mr-2 h-4 w-4" />
+              Do Checkout
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="space-y-4">
@@ -99,26 +131,18 @@ function SessionDetails() {
               <InfoCard title="Total Session Spent" value={`${session.total_spent} ${session.fiat.toUpperCase()}`} />
             </div>
           </div>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Filters</h3>
-              <ExpenseFilters
-                selectedUser={selectedUser}
-                setSelectedUser={setSelectedUser}
-                dateFilter={dateFilter}
-                setDateFilter={setDateFilter}
-                conceptFilter={conceptFilter}
-                setConceptFilter={setConceptFilter}
-                participants={participants}
-              />
-            </div>
-          </div>
         </div>
 
         <div className="mt-4">
           <ExpenseList expenses={filteredExpenses} participants={participants} fiat={session.fiat} />
         </div>
       </main>
+      <CreateExpenseSheet
+        isOpen={isCreateExpenseOpen}
+        onOpenChange={setIsCreateExpenseOpen}
+        onAddExpense={handleAddExpense}
+        participants={participants}
+      />
     </div>
   );
 }
