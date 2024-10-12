@@ -11,7 +11,7 @@ import { checkoutSession } from '@/utils/contractInteraction';
 import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import ExpenseFilters from '@/componentsUX/ExpenseFilters';
-import { ListFilter, CirclePlus, CircleCheckBig } from 'lucide-react';
+import { ListFilter, CirclePlus, CircleCheckBig, ChevronDown } from 'lucide-react';
 
 function SessionDetails() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -60,7 +60,7 @@ function SessionDetails() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow p-4">
+      <main className="flex-grow max-w-[90%] mx-auto p-10">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Session {session.id}</h2>
           <div className="flex items-center">
@@ -94,47 +94,61 @@ function SessionDetails() {
               <CircleCheckBig className="mr-2 h-4 w-4" />
               Do Checkout
             </Button>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="space-y-4">
             {pendingExpenses.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Pending Expenses</h3>
-                <div className="max-h-40 overflow-y-auto">
-                  <ul className="space-y-2">
-                    {pendingExpenses.map((expense, index) => (
-                      <li key={index} className="bg-background p-2 rounded">
-                        <span className="font-medium">{expense.description}:</span> {expense.amount}
-                        {session.fiat.toUpperCase()}
-                        <span className="italic">({participants.find((p) => p.id === expense.user_id)?.name})</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <Button onClick={handleRegisterExpenses} className="mt-4 ">
-                  Register Expenses
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="ml-2 bg-pink-200">
+                    Expenses to Approve <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <div className="p-2">
+                    <h3 className="text-lg font-semibold mb-2">Pending Expenses</h3>
+                    <div className="max-h-40 overflow-y-auto">
+                      <ul className="space-y-2">
+                        {pendingExpenses.map((expense, index) => (
+                          <li key={index} className="bg-background p-2 rounded">
+                            <span className="font-medium">{expense.description}:</span> {expense.amount}
+                            {session.fiat.toUpperCase()}
+                            <span className="italic">({participants.find((p) => p.id === expense.user_id)?.name})</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <Button onClick={handleRegisterExpenses} className="mt-4 justify-items-center ">
+                      Register Expenses
+                    </Button>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
-          <div>
-            <div className="grid grid-cols-4 gap-2">
-              {participants.map((participant) => (
+        </div>
+        <div className=" gap-4 mb-4">
+          <div className="space-y-4">
+            <div className="flex flex-col items-center">
+              <div className="flex justify-between items-center gap-10">
+                {participants.map((participant) => (
+                  <InfoCard
+                    key={participant.id}
+                    title={participant.name}
+                    value={`${participant.total_spent} ${session.fiat.toUpperCase()}`}
+                    subtitle="Total Spent"
+                    className="w-full h-50 px-10"
+                  />
+                ))}
                 <InfoCard
-                  key={participant.id}
-                  title={participant.name}
-                  value={`${participant.total_spent} ${session.fiat.toUpperCase()}`}
-                  subtitle="Total Spent"
+                  title="Total Session Spent"
+                  value={`${session.total_spent} ${session.fiat.toUpperCase()}`}
+                  className="w-full h-50 px-10"
                 />
-              ))}
-              <InfoCard title="Total Session Spent" value={`${session.total_spent} ${session.fiat.toUpperCase()}`} />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-4">
-          <ExpenseList expenses={filteredExpenses} participants={participants} fiat={session.fiat} />
+          <div className="mt-4">
+            <ExpenseList expenses={filteredExpenses} participants={participants} fiat={session.fiat} />
+          </div>
         </div>
       </main>
       <CreateExpenseSheet

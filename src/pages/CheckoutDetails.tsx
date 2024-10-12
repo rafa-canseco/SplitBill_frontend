@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSessionDetails } from '../hooks/useSessionDetails';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/componentsUX/Navbar';
-import Subheader from '@/componentsUX/Subheader';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '../contexts/UserContext';
 import { makePaymentOnChain } from '@/utils/contractInteraction';
 import { Progress } from '@/components/ui/progress';
@@ -29,6 +29,14 @@ function CheckoutDetails() {
     sessionDetails?.participants || []
   );
 
+  useEffect(() => {
+    if (loading) {
+      toast({
+        description: 'Loading participant data...',
+      });
+    }
+  }, [loading]);
+
   if (loading || !sessionDetails) return <div>Loading session details...</div>;
 
   const { session, participants, expenses } = sessionDetails;
@@ -51,10 +59,6 @@ function CheckoutDetails() {
         duration: 5000,
       });
 
-      // Actualizar el estado local después del pago
-      setPaymentStatuses((prev) => ({ ...prev, [userData.walletAddress]: true }));
-      setParticipantBalances((prev) => ({ ...prev, [userData.walletAddress]: BigInt(0) }));
-
       toast({
         description: 'Payment successful.',
       });
@@ -70,11 +74,10 @@ function CheckoutDetails() {
   const userBalance = participantBalances[userData?.walletAddress || ''] || BigInt(0);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen flex-grow max-w-[90%] mx-auto p-10">
       <Navbar />
-      <Subheader />
-      <main className="flex-grow p-4">
-        <h2 className="text-2xl font-bold mb-4">Checkout Details - Session {session.id}</h2>
+      <main className="flex-grow p-4 m-10">
+        <h2 className="text-4xl font-bold mb-10">Checkout Details - Session {session.id}</h2>
 
         {loadingProgress < 100 && (
           <div className="mb-4">
@@ -93,48 +96,57 @@ function CheckoutDetails() {
               loadingProgress={loadingProgress}
             />
           </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Session Summary</h3>
-            <p>Total Spent: ${formatBalance(BigInt(session.total_spent))}</p>
-            <p>Average Expense: ${formatBalance(BigInt(session.total_spent) / BigInt(participants.length))}</p>
-            {loadingProgress === 100 && userBalance < BigInt(0) && !paymentStatuses[userData?.walletAddress || ''] && (
-              <Button onClick={handlePayment} className="mt-4">
-                Pay ${formatBalance(-userBalance)}
-              </Button>
-            )}
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Session Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Total Spent: ${formatBalance(BigInt(session.total_spent))}</p>
+              <p>Average Expense: ${formatBalance(BigInt(session.total_spent) / BigInt(participants.length))}</p>
+              {loadingProgress === 100 &&
+                userBalance < BigInt(0) &&
+                !paymentStatuses[userData?.walletAddress || ''] && (
+                  <Button onClick={handlePayment} className="mt-4">
+                    Pay ${formatBalance(-userBalance)}
+                  </Button>
+                )}
+            </CardContent>
+          </Card>
         </div>
-
-        <h3 className="text-xl font-semibold mb-2">Expense List</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-center">Description</TableHead>
-              <TableHead className="text-center">Amount</TableHead>
-              <TableHead className="text-center">Payer</TableHead>
-              <TableHead className="text-center">Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {expenses.map((expense) => (
-              <TableRow key={expense.id}>
-                <TableCell>{expense.description}</TableCell>
-                <TableCell>
-                  {expense.amount} {session.fiat.toUpperCase()}
-                </TableCell>
-                <TableCell>{participants.find((p) => p.id === expense.user_id)?.name}</TableCell>
-                <TableCell>{new Date(expense.date).toLocaleString()}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        {(sessionState === 2 || sessionState === 3) && (
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-2">Transaction Events</h3>
-            {eventError ? <p className="text-red-500">{eventError}</p> : <EventTable events={sessionEvents} />}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Expense List</h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">Description</TableHead>
+                  <TableHead className="text-center">Amount</TableHead>
+                  <TableHead className="text-center">Payer</TableHead>
+                  <TableHead className="text-center">Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {expenses.map((expense) => (
+                  <TableRow key={expense.id}>
+                    <TableCell>{expense.description}</TableCell>
+                    <TableCell>
+                      {expense.amount} {session.fiat.toUpperCase()}
+                    </TableCell>
+                    <TableCell>{participants.find((p) => p.id === expense.user_id)?.name}</TableCell>
+                    <TableCell>{new Date(expense.date).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        )}
+
+          {(sessionState === 2 || sessionState === 3) && (
+            <div className="">
+              <h3 className="text-xl font-semibold mb-2">Transaction Events</h3>
+              {eventError ? <p className="text-red-500">{eventError}</p> : <EventTable events={sessionEvents} />}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
