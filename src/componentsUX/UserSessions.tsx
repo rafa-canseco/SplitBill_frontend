@@ -34,7 +34,7 @@ function UserSessions() {
   if (error) return <div>Error: {error}</div>;
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Your Sessions</h1>
+      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">Your Sessions</h1>
       {!sessions || sessions.length === 0 ? (
         <p>No sessions found.</p>
       ) : (
